@@ -6,10 +6,23 @@ Save copies a PNG to the clipboard. Ingest closes the selection and continues in
 
 ## Contributors
 
-The table below is the current roster of people who follow the Douyin account behind this project. Each row is a portrait and a name. Account identifiers are omitted. The roster is replaced every day at 00:00, Asia/Shanghai.
+The table below is the current roster of people who follow the Douyin account behind this project. Each row shows a portrait, a name, and that person's follower count. The line above the table is this account's follower count. Account identifiers are omitted. The roster is replaced every day at 00:00, Asia/Shanghai.
 
 <!-- contributors:start -->
-The roster is not available in this revision. A signed-in Douyin session is required before portraits and names can be written here.
+Current roster on 2026-10-26: 10 followers.
+
+| Portrait | Name | Followers |
+| --- | --- | ---: |
+| ![](followers/avatars/e9ebe9f27b76aa44d272.jpg) | 上杉越 | 4,053 |
+| ![](followers/avatars/93d8e97e40e833f3077a.jpg) | 阳仔の奇妙冒险☀️ | 145 |
+| ![](followers/avatars/af99ae7d2b958d5a2115.jpg) | LookLook | 24 |
+| ![](followers/avatars/f4ca4ff679dc156768e8.jpg) | 风吹雪飞棒棒堂 | 1,020 |
+| ![](followers/avatars/1b16d3fe65a85076e7d1.jpg) | 瞓 | 697 |
+| ![](followers/avatars/ac835ebd92dd83338434.jpg) | 愤怒的张开来 | 13,944 |
+| ![](followers/avatars/71e373ddc4f779e53499.jpg) | 来根大薯条 | 32 |
+| ![](followers/avatars/7138d05a460d7161f50c.jpg) | 四叶草🎶🎶 | 19 |
+| ![](followers/avatars/77c80b70a7125496b685.jpg) | 栗子 | 10 |
+| ![](followers/avatars/025f386a5e49f3a86480.jpg) | 红红火火恍恍惚惚 | 10 |
 <!-- contributors:end -->
 
 ## Repository layout
