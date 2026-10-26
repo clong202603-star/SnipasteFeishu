@@ -77,6 +77,8 @@ Portraits and names only. Account identifiers are omitted. The roster is replace
 <!-- contributors:start -->
 | Portrait | Name |
 | --- | --- |
+| <img src="followers/avatars/a550bb1dfd1477cf1278.jpg" width="32" height="32" alt="刘小咪"> | 刘小咪 |
+| <img src="followers/avatars/9b489507d3f36a66ea9f.jpg" width="32" height="32" alt="名字好难取"> | 名字好难取 |
 | <img src="followers/avatars/e9ebe9f27b76aa44d272.jpg" width="32" height="32" alt="上杉越"> | 上杉越 |
 | <img src="followers/avatars/93d8e97e40e833f3077a.jpg" width="32" height="32" alt="阳仔の奇妙冒险☀️"> | 阳仔の奇妙冒险☀️ |
 | <img src="followers/avatars/af99ae7d2b958d5a2115.jpg" width="32" height="32" alt="LookLook"> | LookLook |
@@ -87,5 +89,7 @@ Portraits and names only. Account identifiers are omitted. The roster is replace
 | <img src="followers/avatars/7138d05a460d7161f50c.jpg" width="32" height="32" alt="四叶草🎶🎶"> | 四叶草🎶🎶 |
 | <img src="followers/avatars/77c80b70a7125496b685.jpg" width="32" height="32" alt="栗子"> | 栗子 |
 | <img src="followers/avatars/025f386a5e49f3a86480.jpg" width="32" height="32" alt="红红火火恍恍惚惚"> | 红红火火恍恍惚惚 |
+| <img src="followers/avatars/60ec729186bc9c73aff1.jpg" width="32" height="32" alt="Arcanezf"> | Arcanezf |
+| <img src="followers/avatars/8aea8827d6c4c8579ed6.jpg" width="32" height="32" alt="Blue"> | Blue |
 <!-- contributors:end -->
 
