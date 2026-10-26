@@ -1,5 +1,7 @@
 # SnipasteFeishu
 
+## Introduction
+
 SnipasteFeishu is a menu-bar application for macOS. Press F2, drag a region of the screen, and choose one of three actions: Save, Ingest, or Cancel.
 
 Save copies a PNG to the clipboard. Ingest closes the selection and continues in the background: a vision model reads the dialogue in the screenshot, then writes one record to a Feishu base. A system notification confirms each success and numbers it within the calendar day, as in “18th, shot 1”. An image that fails to upload is kept in a local library and can be sent again from the menu.
@@ -75,15 +77,15 @@ Portraits and names only. Account identifiers are omitted. The roster is replace
 <!-- contributors:start -->
 | Portrait | Name |
 | --- | --- |
-| ![](followers/avatars/e9ebe9f27b76aa44d272.jpg) | 上杉越 |
-| ![](followers/avatars/93d8e97e40e833f3077a.jpg) | 阳仔の奇妙冒险☀️ |
-| ![](followers/avatars/af99ae7d2b958d5a2115.jpg) | LookLook |
-| ![](followers/avatars/f4ca4ff679dc156768e8.jpg) | 风吹雪飞棒棒堂 |
-| ![](followers/avatars/1b16d3fe65a85076e7d1.jpg) | 瞓 |
-| ![](followers/avatars/ac835ebd92dd83338434.jpg) | 愤怒的张开来 |
-| ![](followers/avatars/71e373ddc4f779e53499.jpg) | 来根大薯条 |
-| ![](followers/avatars/7138d05a460d7161f50c.jpg) | 四叶草🎶🎶 |
-| ![](followers/avatars/77c80b70a7125496b685.jpg) | 栗子 |
-| ![](followers/avatars/025f386a5e49f3a86480.jpg) | 红红火火恍恍惚惚 |
+| <img src="followers/avatars/e9ebe9f27b76aa44d272.jpg" width="32" height="32" alt="上杉越"> | 上杉越 |
+| <img src="followers/avatars/93d8e97e40e833f3077a.jpg" width="32" height="32" alt="阳仔の奇妙冒险☀️"> | 阳仔の奇妙冒险☀️ |
+| <img src="followers/avatars/af99ae7d2b958d5a2115.jpg" width="32" height="32" alt="LookLook"> | LookLook |
+| <img src="followers/avatars/f4ca4ff679dc156768e8.jpg" width="32" height="32" alt="风吹雪飞棒棒堂"> | 风吹雪飞棒棒堂 |
+| <img src="followers/avatars/1b16d3fe65a85076e7d1.jpg" width="32" height="32" alt="瞓"> | 瞓 |
+| <img src="followers/avatars/ac835ebd92dd83338434.jpg" width="32" height="32" alt="愤怒的张开来"> | 愤怒的张开来 |
+| <img src="followers/avatars/71e373ddc4f779e53499.jpg" width="32" height="32" alt="来根大薯条"> | 来根大薯条 |
+| <img src="followers/avatars/7138d05a460d7161f50c.jpg" width="32" height="32" alt="四叶草🎶🎶"> | 四叶草🎶🎶 |
+| <img src="followers/avatars/77c80b70a7125496b685.jpg" width="32" height="32" alt="栗子"> | 栗子 |
+| <img src="followers/avatars/025f386a5e49f3a86480.jpg" width="32" height="32" alt="红红火火恍恍惚惚"> | 红红火火恍恍惚惚 |
 <!-- contributors:end -->
 

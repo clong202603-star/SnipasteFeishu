@@ -4,13 +4,13 @@ Portrait and name only.
 
 | Portrait | Name |
 | --- | --- |
-| ![](avatars/e9ebe9f27b76aa44d272.jpg) | 上杉越 |
-| ![](avatars/93d8e97e40e833f3077a.jpg) | 阳仔の奇妙冒险☀️ |
-| ![](avatars/af99ae7d2b958d5a2115.jpg) | LookLook |
-| ![](avatars/f4ca4ff679dc156768e8.jpg) | 风吹雪飞棒棒堂 |
-| ![](avatars/1b16d3fe65a85076e7d1.jpg) | 瞓 |
-| ![](avatars/ac835ebd92dd83338434.jpg) | 愤怒的张开来 |
-| ![](avatars/71e373ddc4f779e53499.jpg) | 来根大薯条 |
-| ![](avatars/7138d05a460d7161f50c.jpg) | 四叶草🎶🎶 |
-| ![](avatars/77c80b70a7125496b685.jpg) | 栗子 |
-| ![](avatars/025f386a5e49f3a86480.jpg) | 红红火火恍恍惚惚 |
+| <img src="avatars/e9ebe9f27b76aa44d272.jpg" width="32" height="32" alt="上杉越"> | 上杉越 |
+| <img src="avatars/93d8e97e40e833f3077a.jpg" width="32" height="32" alt="阳仔の奇妙冒险☀️"> | 阳仔の奇妙冒险☀️ |
+| <img src="avatars/af99ae7d2b958d5a2115.jpg" width="32" height="32" alt="LookLook"> | LookLook |
+| <img src="avatars/f4ca4ff679dc156768e8.jpg" width="32" height="32" alt="风吹雪飞棒棒堂"> | 风吹雪飞棒棒堂 |
+| <img src="avatars/1b16d3fe65a85076e7d1.jpg" width="32" height="32" alt="瞓"> | 瞓 |
+| <img src="avatars/ac835ebd92dd83338434.jpg" width="32" height="32" alt="愤怒的张开来"> | 愤怒的张开来 |
+| <img src="avatars/71e373ddc4f779e53499.jpg" width="32" height="32" alt="来根大薯条"> | 来根大薯条 |
+| <img src="avatars/7138d05a460d7161f50c.jpg" width="32" height="32" alt="四叶草🎶🎶"> | 四叶草🎶🎶 |
+| <img src="avatars/77c80b70a7125496b685.jpg" width="32" height="32" alt="栗子"> | 栗子 |
+| <img src="avatars/025f386a5e49f3a86480.jpg" width="32" height="32" alt="红红火火恍恍惚惚"> | 红红火火恍恍惚惚 |

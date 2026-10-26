@@ -204,15 +204,23 @@ def _cell(nickname: str) -> str:
     return nickname.replace("|", "\\|").replace("\n", " ").strip() or "Unnamed"
 
 
+def _attr(text: str) -> str:
+    return text.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
+
+
 def markdown_table(rows: list[dict], *, image_prefix: str) -> str:
     lines = ["| Portrait | Name |", "| --- | --- |"]
     for row in rows:
+        nickname = _cell(row.get("nickname") or "")
         avatar = row.get("avatar") or ""
         if avatar:
-            image = f"![]({image_prefix}{Path(avatar).name})"
+            image = (
+                f'<img src="{image_prefix}{Path(avatar).name}" '
+                f'width="32" height="32" alt="{_attr(nickname)}">'
+            )
         else:
             image = ""
-        lines.append(f"| {image} | {_cell(row.get('nickname') or '')} |")
+        lines.append(f"| {image} | {nickname} |")
     return "\n".join(lines)
 
 
@@ -264,7 +272,8 @@ def _self_test() -> None:
         image_prefix="avatars/",
     )
     assert "甲\\|乙" in table
-    assert "![](avatars/abc.jpg)" in table
+    assert 'src="avatars/abc.jpg"' in table
+    assert 'width="32"' in table
     assert table.splitlines()[-1] == "|  | 丙 |"
     print("ok")
 
