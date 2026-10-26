@@ -1,8 +1,8 @@
-name: 每日粉丝清单
+name: Daily contributors
 
 on:
   schedule:
-    # 北京时间 0:00
+    # 00:00 Asia/Shanghai
     - cron: "0 16 * * *"
   workflow_dispatch:
 
@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: 拉取当天粉丝清单
+      - name: Refresh the contributor roster
         env:
           DOUYIN_COOKIE: ${{ secrets.DOUYIN_COOKIE }}
           DOUYIN_SEC_UID: ${{ secrets.DOUYIN_SEC_UID }}
@@ -27,14 +27,14 @@ jobs:
           DOUYIN_FOLLOWER_LIMIT: ${{ secrets.DOUYIN_FOLLOWER_LIMIT }}
         run: python3 followers/update_followers.py
 
-      - name: 提交清单
+      - name: Commit the roster
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add followers
+          git add README.md followers
           if git diff --cached --quiet; then
-            echo "清单没有变化"
+            echo "The roster is unchanged"
             exit 0
           fi
-          git commit -m "更新 $(TZ=Asia/Shanghai date +%F) 粉丝清单"
+          git commit -m "Update the contributor roster for $(TZ=Asia/Shanghai date +%F)"
           git push

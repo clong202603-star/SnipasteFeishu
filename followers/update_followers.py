@@ -1,4 +1,4 @@
-"""拉取抖音粉丝，写成当天的昵称和头像清单。
+"""拉取抖音关注者，把肖像和名字写进仓库自述文件。
 
 密钥只从环境变量读取，不写进仓库：
   DOUYIN_COOKIE
@@ -22,8 +22,12 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent
+REPO = ROOT.parent
 AVATARS = ROOT / "avatars"
 DAYS = ROOT / "days"
+README = REPO / "README.md"
+MARKER_START = "<!-- contributors:start -->"
+MARKER_END = "<!-- contributors:end -->"
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
@@ -46,7 +50,7 @@ def _cookie() -> str:
         parts.append(seg)
     cookie = "; ".join(parts)
     if "sessionid=" not in cookie:
-        raise FollowersError("DOUYIN_COOKIE 里没有 sessionid，请换一份刚登录的 Cookie")
+        raise FollowersError("DOUYIN_COOKIE has no sessionid. Sign in again and replace the secret.")
     return cookie
 
 
@@ -61,15 +65,15 @@ def _get_json(url: str, cookie: str) -> dict:
             raw = resp.read().decode("utf-8", "ignore")
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", "ignore")[:180]
-        raise FollowersError(f"抖音 HTTP {exc.code}：{detail}") from exc
+        raise FollowersError(f"Douyin HTTP {exc.code}: {detail}") from exc
     except urllib.error.URLError as exc:
-        raise FollowersError(f"连不上抖音：{exc.reason}") from exc
+        raise FollowersError(f"Could not reach Douyin: {exc.reason}") from exc
     if not raw.strip():
-        raise FollowersError("抖音返回了空内容，多半是机房 IP 被拦住了")
+        raise FollowersError("Douyin returned an empty body. The caller IP is likely blocked.")
     try:
         return json.loads(raw)
     except json.JSONDecodeError as exc:
-        raise FollowersError("抖音返回的不是 JSON") from exc
+        raise FollowersError("Douyin did not return JSON") from exc
 
 
 def _limit() -> int:
@@ -77,9 +81,9 @@ def _limit() -> int:
     try:
         value = int(raw)
     except ValueError as exc:
-        raise FollowersError("DOUYIN_FOLLOWER_LIMIT 必须是数字") from exc
+        raise FollowersError("DOUYIN_FOLLOWER_LIMIT must be a number") from exc
     if value < 1:
-        raise FollowersError("DOUYIN_FOLLOWER_LIMIT 至少为 1")
+        raise FollowersError("DOUYIN_FOLLOWER_LIMIT must be at least 1")
     return value
 
 
@@ -97,14 +101,14 @@ def resolve_sec_uid(cookie: str) -> str:
         return "".join(token)
     unique = os.environ.get("DOUYIN_UNIQUE_ID", "").strip().lstrip("@")
     if not unique:
-        raise FollowersError("请设置 DOUYIN_SEC_UID 或 DOUYIN_UNIQUE_ID")
+        raise FollowersError("Set DOUYIN_SEC_UID or DOUYIN_UNIQUE_ID")
     url = "https://www.iesdouyin.com/web/api/v2/user/info/?" + urllib.parse.urlencode(
         {"unique_id": unique}
     )
     data = _get_json(url, cookie)
     found = ((data.get("user_info") or {}) if data.get("status_code") == 0 else {}).get("sec_uid") or ""
     if not found.startswith(marker):
-        raise FollowersError(f"没有用抖音号 {unique} 找到账号，请改填主页里的 DOUYIN_SEC_UID")
+        raise FollowersError(f"No account found for Douyin ID {unique}. Set DOUYIN_SEC_UID from the profile URL.")
     return found
 
 
@@ -131,12 +135,12 @@ def fetch_followers(sec_uid: str, cookie: str, limit: int) -> list[dict]:
         data = _get_json(f"https://www.douyin.com/aweme/v1/web/user/follower/list/?{query}", cookie)
         code = data.get("status_code")
         if code == 8:
-            raise FollowersError("抖音返回未登录。请在浏览器重新登录后，更新仓库密钥里的 DOUYIN_COOKIE")
+            raise FollowersError("Douyin says the session is logged out. Replace the DOUYIN_COOKIE secret.")
         if code not in (0, None):
-            raise FollowersError(f"抖音拒绝了粉丝列表（{code} {data.get('status_msg') or ''}）".strip())
+            raise FollowersError(f"Douyin refused the contributor list ({code} {data.get('status_msg') or ''})".strip())
         page = data.get("followers") or []
         if not isinstance(page, list):
-            raise FollowersError("粉丝列表的格式变了")
+            raise FollowersError("The contributor list format changed")
         found.extend(item for item in page if isinstance(item, dict))
         if not data.get("has_more") or not page:
             break
@@ -184,7 +188,7 @@ def collect(users: list[dict]) -> list[dict]:
     AVATARS.mkdir(parents=True, exist_ok=True)
     rows = []
     for user in users:
-        nickname = str(user.get("nickname") or "").strip() or "未命名"
+        nickname = str(user.get("nickname") or "").strip() or "Unnamed"
         key = _file_key(user)
         dest = AVATARS / f"{key}.jpg"
         avatar = f"avatars/{key}.jpg"
@@ -197,11 +201,11 @@ def collect(users: list[dict]) -> list[dict]:
 
 
 def _cell(nickname: str) -> str:
-    return nickname.replace("|", "\\|").replace("\n", " ").strip() or "未命名"
+    return nickname.replace("|", "\\|").replace("\n", " ").strip() or "Unnamed"
 
 
 def markdown_table(rows: list[dict], *, image_prefix: str) -> str:
-    lines = ["| 头像 | 昵称 |", "| --- | --- |"]
+    lines = ["| Portrait | Name |", "| --- | --- |"]
     for row in rows:
         avatar = row.get("avatar") or ""
         if avatar:
@@ -212,19 +216,42 @@ def markdown_table(rows: list[dict], *, image_prefix: str) -> str:
     return "\n".join(lines)
 
 
+def _roster_block(day: str, rows: list[dict]) -> str:
+    if rows:
+        body = f"Current roster on {day}: {len(rows)} contributors.\n\n"
+        body += markdown_table(rows, image_prefix="followers/avatars/")
+    else:
+        body = f"No contributors were returned on {day}."
+    return f"{MARKER_START}\n{body}\n{MARKER_END}"
+
+
+def write_root_roster(day: str, rows: list[dict]) -> None:
+    text = README.read_text(encoding="utf-8")
+    if MARKER_START not in text or MARKER_END not in text:
+        raise FollowersError("README.md is missing the contributors markers")
+    pre, rest = text.split(MARKER_START, 1)
+    _, post = rest.split(MARKER_END, 1)
+    README.write_text(pre + _roster_block(day, rows) + post, encoding="utf-8")
+
+
 def write_lists(day: str, rows: list[dict]) -> None:
     DAYS.mkdir(parents=True, exist_ok=True)
-    body = f"# {day} 粉丝清单\n\n共 {len(rows)} 人。只含昵称和头像。\n\n"
+    body = f"# Contributors on {day}\n\n{len(rows)} people. Portrait and name only.\n\n"
     body += markdown_table(rows, image_prefix="../avatars/") + "\n"
     (DAYS / f"{day}.md").write_text(body, encoding="utf-8")
-    latest = f"# 粉丝清单（{day}）\n\n共 {len(rows)} 人。只含昵称和头像。\n\n"
+    latest = f"# Contributors ({day})\n\n{len(rows)} people. Portrait and name only.\n\n"
     latest += markdown_table(rows, image_prefix="avatars/") + "\n"
     (ROOT / "latest.md").write_text(latest, encoding="utf-8")
     public = [{"nickname": row["nickname"], "avatar": row["avatar"]} for row in rows]
     (DAYS / f"{day}.json").write_text(json.dumps(public, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (ROOT / "latest.json").write_text(json.dumps(public, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     dates = sorted((path.stem for path in DAYS.glob("*.md")), reverse=True)
-    index = ["# 粉丝清单", "", "每天北京时间 0 点更新一份。每份清单只放昵称和头像。", ""]
+    index = [
+        "# Contributors",
+        "",
+        "Daily archive. The current roster, with portraits and names, is rendered in the repository README.",
+        "",
+    ]
     for date in dates:
         count = 0
         data_path = DAYS / f"{date}.json"
@@ -233,9 +260,10 @@ def write_lists(day: str, rows: list[dict]) -> None:
                 count = len(json.loads(data_path.read_text(encoding="utf-8")))
             except json.JSONDecodeError:
                 count = 0
-        index.append(f"- [{date}](days/{date}.md)（{count} 人）")
+        index.append(f"- [{date}](days/{date}.md) ({count})")
     index.append("")
     (ROOT / "README.md").write_text("\n".join(index), encoding="utf-8")
+    write_root_roster(day, rows)
 
 
 def _self_test() -> None:
@@ -254,7 +282,7 @@ def main() -> None:
         _self_test()
         return
     if len(sys.argv) != 1:
-        raise SystemExit("用法：python3 followers/update_followers.py")
+        raise SystemExit("Usage: python3 followers/update_followers.py")
     cookie = _cookie()
     sec_uid = resolve_sec_uid(cookie)
     users = fetch_followers(sec_uid, cookie, _limit())
