@@ -196,12 +196,7 @@ def collect(users: list[dict]) -> list[dict]:
             url = _avatar_url(user)
             if not url or not _download(url, dest):
                 avatar = ""
-        count = user.get("follower_count")
-        try:
-            count = int(count)
-        except (TypeError, ValueError):
-            count = None
-        rows.append({"nickname": nickname, "avatar": avatar, "follower_count": count})
+        rows.append({"nickname": nickname, "avatar": avatar})
     return rows
 
 
@@ -209,80 +204,58 @@ def _cell(nickname: str) -> str:
     return nickname.replace("|", "\\|").replace("\n", " ").strip() or "Unnamed"
 
 
-def _count_cell(value) -> str:
-    if isinstance(value, int):
-        return f"{value:,}"
-    return ""
-
-
 def markdown_table(rows: list[dict], *, image_prefix: str) -> str:
-    lines = ["| Portrait | Name | Followers |", "| --- | --- | ---: |"]
+    lines = ["| Portrait | Name |", "| --- | --- |"]
     for row in rows:
         avatar = row.get("avatar") or ""
         if avatar:
             image = f"![]({image_prefix}{Path(avatar).name})"
         else:
             image = ""
-        lines.append(
-            f"| {image} | {_cell(row.get('nickname') or '')} | {_count_cell(row.get('follower_count'))} |"
-        )
+        lines.append(f"| {image} | {_cell(row.get('nickname') or '')} |")
     return "\n".join(lines)
 
 
-def _roster_block(day: str, rows: list[dict], *, account_followers: int | None = None) -> str:
-    total = account_followers if isinstance(account_followers, int) else len(rows)
+def _roster_block(rows: list[dict]) -> str:
     if rows:
-        body = f"Current roster on {day}: {total} followers.\n\n"
-        body += markdown_table(rows, image_prefix="followers/avatars/")
-    elif isinstance(account_followers, int):
-        body = f"Current roster on {day}: {account_followers} followers. Individual names were not returned."
+        body = markdown_table(rows, image_prefix="followers/avatars/")
     else:
-        body = f"No contributors were returned on {day}."
+        body = "No contributors were returned."
     return f"{MARKER_START}\n{body}\n{MARKER_END}"
 
 
-def write_root_roster(day: str, rows: list[dict], *, account_followers: int | None = None) -> None:
+def write_root_roster(rows: list[dict]) -> None:
     text = README.read_text(encoding="utf-8")
     if MARKER_START not in text or MARKER_END not in text:
         raise FollowersError("README.md is missing the contributors markers")
     pre, rest = text.split(MARKER_START, 1)
     _, post = rest.split(MARKER_END, 1)
-    README.write_text(pre + _roster_block(day, rows, account_followers=account_followers) + post, encoding="utf-8")
+    README.write_text(pre + _roster_block(rows) + post, encoding="utf-8")
 
 
 def write_lists(day: str, rows: list[dict]) -> None:
     DAYS.mkdir(parents=True, exist_ok=True)
-    body = f"# Contributors on {day}\n\n{len(rows)} people. Portrait, name, and follower count.\n\n"
+    body = f"# Contributors on {day}\n\nPortrait and name only.\n\n"
     body += markdown_table(rows, image_prefix="../avatars/") + "\n"
     (DAYS / f"{day}.md").write_text(body, encoding="utf-8")
-    latest = f"# Contributors ({day})\n\n{len(rows)} people. Portrait, name, and follower count.\n\n"
+    latest = f"# Contributors ({day})\n\nPortrait and name only.\n\n"
     latest += markdown_table(rows, image_prefix="avatars/") + "\n"
     (ROOT / "latest.md").write_text(latest, encoding="utf-8")
-    public = [
-        {"nickname": row["nickname"], "avatar": row["avatar"], "follower_count": row.get("follower_count")}
-        for row in rows
-    ]
+    public = [{"nickname": row["nickname"], "avatar": row["avatar"]} for row in rows]
     (DAYS / f"{day}.json").write_text(json.dumps(public, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (ROOT / "latest.json").write_text(json.dumps(public, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     dates = sorted((path.stem for path in DAYS.glob("*.md")), reverse=True)
     index = [
         "# Contributors",
         "",
-        "Daily archive. The current roster, with portraits, names, and follower counts, is rendered in the repository README.",
+        "Daily archive. The current roster, with portraits and names, is at the end of the repository README.",
         "",
     ]
     for date in dates:
-        count = 0
-        data_path = DAYS / f"{date}.json"
-        if data_path.is_file():
-            try:
-                count = len(json.loads(data_path.read_text(encoding="utf-8")))
-            except json.JSONDecodeError:
-                count = 0
-        index.append(f"- [{date}](days/{date}.md) ({count})")
+        index.append(f"- [{date}](days/{date}.md)")
     index.append("")
     (ROOT / "README.md").write_text("\n".join(index), encoding="utf-8")
-    write_root_roster(day, rows)
+    write_root_roster(rows)
 
 
 def _self_test() -> None:
@@ -292,7 +265,7 @@ def _self_test() -> None:
     )
     assert "甲\\|乙" in table
     assert "![](avatars/abc.jpg)" in table
-    assert table.splitlines()[-1] == "|  | 丙 |  |"
+    assert table.splitlines()[-1] == "|  | 丙 |"
     print("ok")
 
 
